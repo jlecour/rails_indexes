@@ -100,9 +100,11 @@ module Indexer
         
         begin
           current_model = File.basename(file_name).sub(/\.rb$/,'').camelize.constantize
-          primary_key = current_model.primary_key
-          table_name = current_model.table_name
-          @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
+          unless current_model.abstract_class?
+            primary_key = current_model.primary_key
+            table_name = current_model.table_name
+            @indexes_required[table_name] += [primary_key] unless @indexes_required[table_name].include?(primary_key)
+          end
         rescue
           # NO-OP
         end
